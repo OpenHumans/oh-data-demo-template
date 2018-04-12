@@ -9,6 +9,8 @@ import os
 import json
 import shutil
 import tempfile
+from django.utils import lorem_ipsum
+import textwrap
 import requests
 from celery import shared_task
 from django.conf import settings
@@ -20,22 +22,20 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def xfer_to_open_humans(user_data, metadata, oh_id, num_submit=0, **kwargs):
+def xfer_to_open_humans(oh_id, num_submit=0, logger=None, **kwargs):
     """
     Transfer data to Open Humans.
     num_submit is an optional parameter in case you want to resubmit failed
     tasks (see comments in code).
     """
-
-    logger.debug('Trying to copy data for {} to Open Humans'.format(oh_id))
-
+    print('Trying to copy data for {} to Open Humans'.format(oh_id))
     oh_member = OpenHumansMember.objects.get(oh_id=oh_id)
 
     # Make a tempdir for all temporary files.
     # Delete this even if an exception occurs.
     tempdir = tempfile.mkdtemp()
     try:
-        add_data_to_open_humans(user_data, metadata, oh_member, tempdir)
+        add_data_to_open_humans(oh_member, tempdir)
     finally:
         shutil.rmtree(tempdir)
 
@@ -49,7 +49,7 @@ def xfer_to_open_humans(user_data, metadata, oh_id, num_submit=0, **kwargs):
     #     return
 
 
-def add_data_to_open_humans(user_data, metadata, oh_member, tempdir):
+def add_data_to_open_humans(oh_member, tempdir):
     """
     Add demonstration file to Open Humans.
     This might be a good place to start editing, to add your own project data.
@@ -57,8 +57,8 @@ def add_data_to_open_humans(user_data, metadata, oh_member, tempdir):
     will be cleaned up later. You can use the tempdir to stage the creation of
     files you plan to upload to Open Humans.
     """
-    # Create data file.
-    data_filepath, data_metadata = make_datafile(user_data, metadata, tempdir)
+    # Create example file.
+    data_filepath, data_metadata = make_example_datafile(tempdir)
 
     # Remove any files with this name previously added to Open Humans.
     delete_oh_file_by_name(oh_member, filename=os.path.basename(data_filepath))
@@ -77,6 +77,22 @@ def make_datafile(user_data, metadata, tempdir):
     with open(filepath, 'w') as f:
         f.write(user_data)
 
+    return filepath, metadata
+
+
+def make_example_datafile(tempdir):
+    """
+    Make a lorem-ipsum file in the tempdir, for demonstration purposes.
+    """
+    filepath = os.path.join(tempdir, 'example_data.txt')
+    paras = lorem_ipsum.paragraphs(3, common=True)
+    output_text = '\n'.join(['\n'.join(textwrap.wrap(p)) for p in paras])
+    with open(filepath, 'w') as f:
+        f.write(output_text)
+    metadata = {
+        'tags': ['example', 'text', 'demo'],
+        'description': 'File with lorem ipsum text for demonstration purposes',
+    }
     return filepath, metadata
 
 
