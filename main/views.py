@@ -67,7 +67,7 @@ def complete(request):
 
         context = {'oh_id': oh_member.oh_id,
                    'oh_proj_page': settings.OH_ACTIVITY_PAGE}
-        return render(request, 'main/fitbit.html',
+        return render(request, 'main/complete.html',
                       context=context)
 
     logger.debug('Invalid code exchange. User returned to starting page.')
@@ -84,7 +84,7 @@ def oh_code_to_member(code):
         data = {
             'grant_type': 'authorization_code',
             'redirect_uri':
-            '{}/complete/'.format(settings.OPENHUMANS_APP_BASE_URL),
+            '{}/complete'.format(settings.OPENHUMANS_APP_BASE_URL),
             'code': code,
         }
         req = requests.post(
