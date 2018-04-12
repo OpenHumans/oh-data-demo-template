@@ -29,26 +29,27 @@ DEBUG = False if os.getenv('DEBUG', '').lower() == 'false' else True
 
 REMOTE = True if os.getenv('REMOTE', '').lower() == 'true' else False
 
-# Allow all host headers if this is running as a Heroku app.
-if REMOTE:
-    ALLOWED_HOSTS = ['*']
-    print('REMOTE True')
-else:
-    ALLOWED_HOSTS = []
-    print('REMOTE False')
-APP_BASE_URL = os.getenv('APP_BASE_URL')
+ALLOWED_HOSTS = ['*']
 
+HEROKUCONFIG_APP_NAME = os.getenv('HEROKUCONFIG_APP_NAME', '')
+
+DEFAULT_BASE_URL = ('https://{}.herokuapp.com'.format(HEROKUCONFIG_APP_NAME) if
+                    REMOTE else 'http://127.0.0.1:5000')
+
+OPENHUMANS_APP_BASE_URL = os.getenv('APP_BASE_URL', DEFAULT_BASE_URL)
+if OPENHUMANS_APP_BASE_URL[-1] == "/":
+    OPENHUMANS_APP_BASE_URL = OPENHUMANS_APP_BASE_URL[:-1]
 
 # Open Humans configuration
-OH_CLIENT_ID = os.getenv('OH_CLIENT_ID')
-OH_CLIENT_SECRET = os.getenv('OH_CLIENT_SECRET')
+OPENHUMANS_CLIENT_ID = os.getenv('OH_CLIENT_ID')
+OPENHUMANS_CLIENT_SECRET = os.getenv('OH_CLIENT_SECRET')
 OH_ACTIVITY_PAGE = os.getenv('OH_ACTIVITY_PAGE')
-OH_BASE_URL = 'https://www.openhumans.org'
+OPENHUMANS_OH_BASE_URL = 'https://www.openhumans.org'
 
-OH_API_BASE = 'https://www.openhumans.org/api/direct-sharing'
-OH_DELETE_FILES = OH_API_BASE + '/project/files/delete/'
+OH_API_BASE = OPENHUMANS_OH_BASE_URL + '/api/direct-sharing'
 OH_DIRECT_UPLOAD = OH_API_BASE + '/project/files/upload/direct/'
 OH_DIRECT_UPLOAD_COMPLETE = OH_API_BASE + '/project/files/upload/complete/'
+OH_DELETE_FILES = OH_API_BASE + '/project/files/delete/'
 
 # Applications installed
 INSTALLED_APPS = [
@@ -61,6 +62,8 @@ INSTALLED_APPS = [
 
     # Local apps. Update these if you add or change app names!
     'datauploader.apps.DatauploaderConfig',
+    'open_humans.apps.OpenHumansConfig',
+    'main.apps.MainConfig'
 ]
 
 MIDDLEWARE = [

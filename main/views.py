@@ -1,24 +1,52 @@
 import logging
 import requests
+import os
+import base64
+import json
+import arrow
 
+from requests_respectful import RespectfulRequester
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.conf import settings
-from .tasks import xfer_to_open_humans
-from .models import OpenHumansMember
+from datauploader.tasks import xfer_to_open_humans
+from open_humans.models import OpenHumansMember
+from .models import DataSourceMember
+
 
 # Set up logging.
 logger = logging.getLogger(__name__)
+
+if settings.REMOTE is True:
+    from urllib.parse import urlparse
+    url_object = urlparse(os.getenv('REDIS_URL'))
+    logger.info('Connecting to redis at %s:%s',
+        url_object.hostname,
+        url_object.port)
+    RespectfulRequester.configure(
+        redis={
+            "host": url_object.hostname,
+            "port": url_object.port,
+            "password": url_object.password,
+            "database": 0
+        },
+        safety_threshold=5)
+
+# Requests Respectful (rate limiting, waiting)
+# This creates a Realm called "source" that allows 60 requests per minute maximum.
+rr = RespectfulRequester()
+rr.register_realm("Source", max_requests=60, timespan=60)
 
 
 def index(request):
     """
     Starting page for app.
     """
-    context = {'client_id': settings.OH_CLIENT_ID,
+
+    context = {'client_id': settings.OPENHUMANS_CLIENT_ID,
                'oh_proj_page': settings.OH_ACTIVITY_PAGE}
 
-    return render(request, 'datauploader/index.html', context=context)
+    return render(request, 'main/index.html', context=context)
 
 
 def complete(request):
@@ -26,7 +54,6 @@ def complete(request):
     Receive user from Open Humans. Store data, start upload.
     """
     logger.debug("Received user returning from Open Humans.")
-
     # Exchange code for token.
     # This creates an OpenHumansMember and associated user account.
     code = request.GET.get('code', '')
@@ -38,11 +65,9 @@ def complete(request):
         login(request, user,
               backend='django.contrib.auth.backends.ModelBackend')
 
-        # Initiate a data transfer task, then render `complete.html`.
-        xfer_to_open_humans.delay(oh_id=oh_member.oh_id)
         context = {'oh_id': oh_member.oh_id,
                    'oh_proj_page': settings.OH_ACTIVITY_PAGE}
-        return render(request, 'datauploader/complete.html',
+        return render(request, 'main/fitbit.html',
                       context=context)
 
     logger.debug('Invalid code exchange. User returned to starting page.')
@@ -54,18 +79,20 @@ def oh_code_to_member(code):
     Exchange code for token, use this to create and return OpenHumansMember.
     If a matching OpenHumansMember exists, update and return it.
     """
-    if settings.OH_CLIENT_SECRET and settings.OH_CLIENT_ID and code:
+    if settings.OPENHUMANS_CLIENT_SECRET and \
+       settings.OPENHUMANS_CLIENT_ID and code:
         data = {
             'grant_type': 'authorization_code',
-            'redirect_uri': '{}/complete'.format(settings.APP_BASE_URL),
+            'redirect_uri':
+            '{}/complete/'.format(settings.OPENHUMANS_APP_BASE_URL),
             'code': code,
         }
         req = requests.post(
-            '{}/oauth2/token/'.format(settings.OH_BASE_URL),
+            '{}/oauth2/token/'.format(settings.OPENHUMANS_OH_BASE_URL),
             data=data,
             auth=requests.auth.HTTPBasicAuth(
-                settings.OH_CLIENT_ID,
-                settings.OH_CLIENT_SECRET
+                settings.OPENHUMANS_CLIENT_ID,
+                settings.OPENHUMANS_CLIENT_SECRET
             )
         )
         data = req.json()
@@ -106,7 +133,7 @@ def oh_get_member_data(token):
     """
     req = requests.get(
         '{}/api/direct-sharing/project/exchange-member/'
-        .format(settings.OH_BASE_URL),
+        .format(settings.OPENHUMANS_OH_BASE_URL),
         params={'access_token': token}
         )
     if req.status_code == 200:
