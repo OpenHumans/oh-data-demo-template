@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import dj_database_url
 from env_tools import apply_env
+from requests_respectful import RespectfulRequester
 
 apply_env()
 
@@ -50,6 +51,26 @@ OH_API_BASE = OPENHUMANS_OH_BASE_URL + '/api/direct-sharing'
 OH_DIRECT_UPLOAD = OH_API_BASE + '/project/files/upload/direct/'
 OH_DIRECT_UPLOAD_COMPLETE = OH_API_BASE + '/project/files/upload/complete/'
 OH_DELETE_FILES = OH_API_BASE + '/project/files/delete/'
+
+# Requests Respectful (rate limiting, waiting)
+if REMOTE is True:
+    from urllib.parse import urlparse
+    url_object = urlparse(os.getenv('REDIS_URL'))
+    logger.info('Connecting to redis at %s:%s',
+        url_object.hostname,
+        url_object.port)
+    RespectfulRequester.configure(
+        redis={
+            "host": url_object.hostname,
+            "port": url_object.port,
+            "password": url_object.password,
+            "database": 0
+        },
+        safety_threshold=5)
+
+# This creates a Realm called "source" that allows 60 requests per minute maximum.
+rr = RespectfulRequester()
+rr.register_realm("Source", max_requests=60, timespan=60)
 
 # Applications installed
 INSTALLED_APPS = [

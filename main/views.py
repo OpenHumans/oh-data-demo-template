@@ -5,37 +5,17 @@ import base64
 import json
 import arrow
 
-from requests_respectful import RespectfulRequester
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.conf import settings
 from datauploader.tasks import xfer_to_open_humans
 from open_humans.models import OpenHumansMember
 from .models import DataSourceMember
+from demotemplate.settings import rr
 
 
 # Set up logging.
 logger = logging.getLogger(__name__)
-
-if settings.REMOTE is True:
-    from urllib.parse import urlparse
-    url_object = urlparse(os.getenv('REDIS_URL'))
-    logger.info('Connecting to redis at %s:%s',
-        url_object.hostname,
-        url_object.port)
-    RespectfulRequester.configure(
-        redis={
-            "host": url_object.hostname,
-            "port": url_object.port,
-            "password": url_object.password,
-            "database": 0
-        },
-        safety_threshold=5)
-
-# Requests Respectful (rate limiting, waiting)
-# This creates a Realm called "source" that allows 60 requests per minute maximum.
-rr = RespectfulRequester()
-rr.register_realm("Source", max_requests=60, timespan=60)
 
 
 def index(request):
