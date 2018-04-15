@@ -12,7 +12,6 @@ from datauploader.tasks import (xfer_to_open_humans,
                                 make_request_respectful_get)
 from open_humans.models import OpenHumansMember
 from .models import DataSourceMember
-from demotemplate.settings import rr
 
 
 # Set up logging.
