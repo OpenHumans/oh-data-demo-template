@@ -14,7 +14,7 @@
 - [Cloning this template](#cloning-this-template)
 - [Setting up local environment](#setting-up-local-environment)
     + [Installing Heroku CLI](#installing-heroku-cli)
-    + [Installing RabbitMQ](#installing-rabbitmq)
+    + [Installing Redis](#installing-redis)
     + [Python](#python)
     + [pip](#pip)
     + [Virtual environments](#virtual-environments)
@@ -96,18 +96,18 @@ otherwise follow [these instructions](https://devcenter.heroku.com/articles/hero
 
 [Click the link](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) and choose an installer to download
 
-### Installing RabbitMQ
+### Installing Redis
 
-[RabbitMQ](http://www.rabbitmq.com) is an open source [message broker](https://en.wikipedia.org/wiki/Message_broker) used by this application.
+[Redis](https://redis.io/) is an open source, in-memory data structure store, used as a database, cache and [message broker](https://en.wikipedia.org/wiki/Message_broker) used by this application.
 
-To install RabbitMQ you can follow [these instructions](https://www.rabbitmq.com/download.html), or to install and then set it running in the background:
+To install Redis you can follow [these instructions](https://redis.io/topics/quickstart), or to install and then set it running in the background with Docker:
 
-`$ brew install rabbitmq`
-`$ brew services start rabbitmq`
+`$ docker create --name redis-db -p 6379:6379 redis:alpine`
+`$ sudo service docker start`
 
-To set it running on very popular Ubuntu and other Debian based systems, it will likely be started for you after you install the package, but can also start it manually with:
+To set it running with Docker on very popular Ubuntu and other Debian based systems, it will likely be started for you after you install the package, but can also start it manually with:
 
-`$ sudo rabbitmq-server start`.
+`$ docker start redis-db`.
 
 ### Python
 
@@ -211,9 +211,9 @@ If you use Heroku's free default domain, this will be set by the name you choose
 
 In your browser, head over to `http://dashboard.heroku.com/apps` and log in to see the app you just created.
 
-Go to the `resources` tab, and add the following Add-ons:
+Go to the `Resources` tab, and add the following Add-ons:
 
-1. `CloudAMQP` - a message queuing service
+1. `Heroku Redis`
 2. `Heroku Postgres`
 
 Next go to the `settings` tab and add the environment variables as in the `.env` file.
