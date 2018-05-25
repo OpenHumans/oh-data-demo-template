@@ -5,18 +5,18 @@ These tasks:
   2. adds a data file
 """
 import logging
-import os
 import json
-import shutil
 import tempfile
-from django.utils import lorem_ipsum
-import textwrap
 import requests
+import os
 from celery import shared_task
 from django.conf import settings
 from open_humans.models import OpenHumansMember
-from datetime import datetime
+from datetime import datetime, timedelta
 from demotemplate.settings import rr
+from requests_respectful import RequestsRespectfulRateLimitedError
+from ohapi import api
+import arrow
 
 # Set up logging.
 logger = logging.getLogger(__name__)
