@@ -16,3 +16,7 @@ class DataSourceMember(models.Model):
     """
     user = models.OneToOneField(OpenHumansMember, on_delete=models.CASCADE)
     # Your other fields should go below here
+    last_updated = models.DateTimeField(
+                            default=(arrow.now() - timedelta(days=7)).format())
+    last_submitted = models.DateTimeField(
+                            default=(arrow.now() - timedelta(days=7)).format())
