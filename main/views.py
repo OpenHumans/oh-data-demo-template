@@ -1,18 +1,15 @@
 import logging
 import requests
-import os
-import base64
-import json
-import arrow
-
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.conf import settings
-from datauploader.tasks import (xfer_to_open_humans, 
-                                make_request_respectful_get)
 from open_humans.models import OpenHumansMember
 from .models import DataSourceMember
-
+from .helpers import get_datasource_file, check_update
+from datauploader.tasks import process_source
+from ohapi import api
+import arrow
 
 # Set up logging.
 logger = logging.getLogger(__name__)
@@ -22,18 +19,20 @@ def index(request):
     """
     Starting page for app.
     """
+    if request.user.is_authenticated:
+        return redirect('/dashboard')
+    else:
+        context = {'client_id': settings.OPENHUMANS_CLIENT_ID,
+                   'oh_proj_page': settings.OH_ACTIVITY_PAGE}
 
-    context = {'client_id': settings.OPENHUMANS_CLIENT_ID,
-               'oh_proj_page': settings.OH_ACTIVITY_PAGE}
-
-    return render(request, 'main/index.html', context=context)
+        return render(request, 'main/index.html', context=context)
 
 
 def complete(request):
     """
     Receive user from Open Humans. Store data, start upload.
     """
-    logger.debug("Received user returning from Open Humans.")
+    print("Received user returning from Open Humans.")
     # Exchange code for token.
     # This creates an OpenHumansMember and associated user account.
     code = request.GET.get('code', '')
@@ -70,7 +69,7 @@ def dashboard(request):
             allow_update = False
             datasource_member = ''
             download_file = ''
-            
+      
         context = {
             'oh_member': request.user.oh_member,
             'datasource_member': datasource_member,
