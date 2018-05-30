@@ -7,7 +7,7 @@ name = "pypi"
 
 [packages]
 
-Django = "*"
+django = "*"
 celery = "*"
 arrow = "*"
 requests = "*"
@@ -17,12 +17,15 @@ dj-database-url = "*"
 whitenoise = "*"
 env-tools = "*"
 redis = "*"
-PyYAML = "*"
+pyyaml = "*"
+open-humans-api = "*"
 
 
 [dev-packages]
 
 vcrpy = "*"
+freezegun = "*"
+coverage = "*"
 
 
 [requires]
