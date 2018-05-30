@@ -2,36 +2,7 @@
 
 [![Build Status](https://travis-ci.org/OpenHumans/oh-data-demo-template.svg?branch=master)](https://travis-ci.org/OpenHumans/oh-data-demo-template)
 
-> Work through this guide to add a data source to Open Humans
-
-## Table of Contents
-
-- [Requirements](#requirements)
-- [Quickstart](#quickstart)
-- [About this repo](#about-this-repo)
-- [Introduction](#introduction)
-    + [Workflow overview](#workflow-overview)
-    + [How does an Open Humans data source work?](#how-does-an-open-humans-data-source-work)
-- [Cloning this template](#cloning-this-template)
-- [Setting up local environment](#setting-up-local-environment)
-    + [Installing Heroku CLI](#installing-heroku-cli)
-    + [Installing Redis](#installing-redis)
-    + [Python](#python)
-    + [pip](#pip)
-    + [Virtual environments](#virtual-environments)
-    + [Installing dependencies](#installing-dependencies)
-- [Creating an Open Humans project](#creating-an-open-humans-project)
-- [Final steps of app setup](#final-steps-of-app-setup)
-- [Heroku deployment](#heroku-deployment)
-    + [Heroku setup](#heroku-setup)
-    + [Creating a Heroku application](#creating-a-heroku-application)
-    + [App configuration](#app-configuration)
-- [Adding dummy data](#adding-dummy-data)
-- [Next steps](#next-steps)
-    + [Under the hood](#under-the-hood)
-    + [Editing the template](#editing-the-template)
-- [Getting help](#getting-help)
-
+> Starter template/repository to add a data source to Open Humans
 
 ### Requirements
 

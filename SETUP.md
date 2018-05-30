@@ -2,6 +2,28 @@
 
 This is intended to be a detailed local setup document with explanations for this repository.
 
+## Table of Contents
+
+- [Cloning this template](#cloning-this-template)
+- [Setting up local environment](#setting-up-local-environment)
+    + [Installing Heroku CLI](#installing-heroku-cli)
+    + [Installing Redis](#installing-redis)
+    + [Python](#python)
+    + [pip](#pip)
+    + [Virtual environments](#virtual-environments)
+    + [Installing dependencies](#installing-dependencies)
+- [Creating an Open Humans project](#creating-an-open-humans-project)
+- [Final steps of app setup](#final-steps-of-app-setup)
+- [Heroku deployment](#heroku-deployment)
+    + [Heroku setup](#heroku-setup)
+    + [Creating a Heroku application](#creating-a-heroku-application)
+    + [App configuration](#app-configuration)
+- [Adding dummy data](#adding-dummy-data)
+- [Next steps](#next-steps)
+    + [Under the hood](#under-the-hood)
+    + [Editing the template](#editing-the-template)
+- [Getting help](#getting-help)
+
 ## Cloning this template
 
 In your terminal, navigate to the folder in which you want to store this repo, and enter the command
