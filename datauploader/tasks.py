@@ -92,7 +92,7 @@ def replace_datasource(oh_member, source_data):
 def get_start_date(source_data):
     # This function should get a start date for data
     # retrieval, by using the data source API.
-
+    pass
 
 def get_existing_data(oh_access_token):
     member = api.exchange_oauth2_member(oh_access_token)

@@ -6,7 +6,8 @@
 
 ## Table of Contents
 
-- [Getting help](#getting-help)
+- [Requirements](#requirements)
+- [Quickstart](#quickstart)
 - [About this repo](#about-this-repo)
 - [Introduction](#introduction)
     + [Workflow overview](#workflow-overview)
@@ -29,11 +30,30 @@
 - [Next steps](#next-steps)
     + [Under the hood](#under-the-hood)
     + [Editing the template](#editing-the-template)
+- [Getting help](#getting-help)
 
 
-## Getting help
+### Requirements
 
-If you have any questions or suggestions, or run into any issues with this demo/template, please let us know, either over in [Github issues](http://github.com/OpenHumans/oh-data-source-template/issues), or at our [Slack channel](http://slackin.openhumans.org) where our growing community hangs out.
+- Python 3 & pip
+- Redis
+- heroku cli
+- pipenv
+
+### Quickstart
+
+This is a very high level overview of the commands needed to set this project up from scratch, if you already have the dependencies already installed. Read below instructions for the local setup explained in more detail.
+
+```sh
+git clone git@github.com:OpenHumans/oh-data-demo-template.git
+cd oh-data-demo-template
+cp env.example .env
+# now, edit your .env file and update it with your client id/secret, etc
+pipenv install
+pipenv run python manage.py migrate
+pipenv run heroku local
+# go to http://localhost:5000/ and the template should be running
+```
 
 ## About this repo
 
@@ -64,7 +84,6 @@ So let's get that demo working on your machine, and you should be able to comple
 #### This gif shows the completed app being used to add dummy data to an Open Humans project:
 
 ![](https://cl.ly/0s2i2J3i191d/demo-gif.gif)
-
 
 ## Cloning this template
 
@@ -98,9 +117,12 @@ otherwise follow [these instructions](https://devcenter.heroku.com/articles/hero
 
 ### Installing Redis
 
-[Redis](https://redis.io/) is an open source, in-memory data structure store, used as a database, cache and [message broker](https://en.wikipedia.org/wiki/Message_broker) used by this application.
+[Redis](https://redis.io/) is an open source, in-memory data structure store, used as a database, cache and [message broker](https://en.wikipedia.org/wiki/Message_broker) used by this application for Celery and Requests Respectful.
 
-To install Redis you can follow [these instructions](https://redis.io/topics/quickstart), or to install and then set it running in the background with Docker:
+To install Redis you have a few options (just do 1 of them):
+1. Follow [these instructions](https://redis.io/topics/quickstart)
+2. (macOS only) `brew install redis` and then `redis-server /usr/local/etc/redis.conf`
+3. Install with Docker and run container in background:
 
 `$ docker create --name redis-db -p 6379:6379 redis:alpine`
 `$ sudo service docker start`
@@ -300,3 +322,7 @@ Now you have worked through to create a working demo, and should understand roug
 You are likely to want to start making changes in the `tasks.py` file, which is where much of the logic is stored. Instead of generating a dummy data file you will want to think about how to get your own data into the app, whether it is a previously downloaded file, which needs to be processed and/or vetted by the app, or you are working from an external API.
 
 Good luck, and please do [get in touch]((http://github.com/OpenHumans/oh-data-source-template/issues)) to ask questions, give suggestions, or join in with our [community chat](http://slackin.openhumans.org)!
+
+## Getting help
+
+If you have any questions or suggestions, or run into any issues with this demo/template, please let us know, either over in [Github issues](http://github.com/OpenHumans/oh-data-source-template/issues), or at our [Slack channel](http://slackin.openhumans.org) where our growing community hangs out.
