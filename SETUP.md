@@ -198,10 +198,11 @@ You can watch logs with the command `$ heroku logs -t`.
 
 If you make changes you may have to migrate again, to do this run:
 
-`$ heroku run python manage.py makemigrations`
-`$ heroku run python manage.py migrate`
-`$ git push heroku master`
-
+```
+$ heroku run python manage.py makemigrations
+$ heroku run python manage.py migrate
+$ git push heroku master
+```
 
 ## Adding dummy data
 
