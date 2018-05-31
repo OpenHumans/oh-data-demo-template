@@ -177,13 +177,13 @@ Go to the `Resources` tab, and add the following Add-ons:
 1. `Heroku Redis`
 2. `Heroku Postgres`
 
-Next go to the `settings` tab and add the environment variables as in the `.env` file.
+Next go to the `settings` tab and add the variables to `Config Vars` as they are in your `.env` file.
 
 1. `OH_CLIENT_ID`
 2. `OH_CLIENT_SECRET`
 3. `OH_ACTIVITY_PAGE`
 4. `APP_BASE_URL` (e.g. https://your-app-name.herokuapp.com - no trailing dash!)
-5. `SECRET_KEY`
+5. `SECRET_KEY` (see the [`Django` docs here](https://docs.djangoproject.com/en/2.0/ref/settings/#std:setting-SECRET_KEY))
 6. `DEBUG` = true when needed
 7. `REMOTE` = true
 
