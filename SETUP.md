@@ -189,16 +189,20 @@ Next go to the `settings` tab and add the environment variables as in the `.env`
 
 Head back over to your terminal and run the following command to initialize and update your code remotely in Heroku:
 
-`$ git push heroku master`
+```
+$ git add remote heroku https://git.heroku.com/your-app-name.git` 
+$ git push heroku master`
+```
 
 You can watch logs with the command `$ heroku logs -t`.
 
 If you make changes you may have to migrate again, to do this run:
 
-`$ heroku run python manage.py makemigrations`
-`$ heroku run python manage.py migrate`
-`$ git push heroku master`
-
+```
+$ heroku run python manage.py makemigrations
+$ heroku run python manage.py migrate
+$ git push heroku master
+```
 
 ## Adding dummy data
 
